@@ -10,6 +10,8 @@ from django.core.management import call_command
 
 import ijson
 
+from .exceptions import EmptyFixtures
+
 
 class FixtureDiff(object):
     """
@@ -51,8 +53,11 @@ class FixtureDiff(object):
         with open(self.fixture_path, 'r') as f:
             line = f.readline()
 
-            while ':' not in line:
+            while line and ':' not in line:
                 line = f.readline()
+
+            if not line:
+                raise EmptyFixtures(self.fixture_path)
 
             return len(line) - len(line.lstrip(' '))
 

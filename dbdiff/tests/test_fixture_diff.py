@@ -4,6 +4,7 @@ from django import test
 from django.conf import settings
 
 from . import base
+from ..exceptions import EmptyFixtures
 from ..fixture_diff import FixtureDiff
 
 
@@ -21,6 +22,9 @@ class FixtureDiffTest(test.TestCase):
 
     def test_indent(self):
         assert self.diff.fixture_indent == 4
+
+        with self.assertRaises(EmptyFixtures):
+            FixtureDiff('dbdiff/fixtures/empty.json').fixture_indent
 
     def test_get_models(self):
         assert len(self.diff.fixture_models) == 1
