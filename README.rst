@@ -78,3 +78,9 @@ If any difference is found between the database and the test fixture, then
 ``diff()`` will return the diff as outputed by GNU diff.
 
 More public API tests can be found in dbidff/tests/test_dbdiff.py.
+
+Django model observer
+=====================
+
+It is interresting to note that a related, perhaps sort-of similar app exists:
+https://github.com/Griffosx/djmo
