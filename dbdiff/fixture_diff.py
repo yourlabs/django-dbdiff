@@ -68,7 +68,7 @@ class FixtureDiff(object):
         cmd = 'diff -u1 %s %s | sed "1,2 d"' % (
             self.fixture_path, self.dump_path)
 
-        if apps.get_app_config('dbdiff').debug:
+        if apps.get_app_config('dbdiff').debug:  # pragma: no cover
             print(cmd)
 
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
