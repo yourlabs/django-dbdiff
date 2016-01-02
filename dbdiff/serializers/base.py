@@ -2,6 +2,7 @@
 
 import collections
 import datetime
+import decimal
 
 
 class BaseSerializerMixin(object):
@@ -35,9 +36,19 @@ class BaseSerializerMixin(object):
                 tzinfo=value.tzinfo
             )
 
+    @classmethod
+    def normalize_decimals(cls, data):
+        """Strip trailing zeros for constitency."""
+        for key, value in data['fields'].items():
+            if not isinstance(value, decimal.Decimal):
+                continue
+
+            data['fields'][key] = value.normalize()
+
     def get_dump_object(self, obj):
         """Actual method used by Django serializers to dump dicts."""
         data = super(BaseSerializerMixin, self).get_dump_object(obj)
         self.remove_microseconds(data)
+        self.normalize_decimals(data)
         data = self.recursive_dict_sort(data)
         return data
