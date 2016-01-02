@@ -26,8 +26,11 @@ def diff(fixture):
     try:
         out = diff.get_diff()
     except:
-        DEBUG or diff.clean()
+        if not DEBUG:
+            diff.clean()
         raise
 
-    DEBUG or diff.clean()
+    if not DEBUG:
+        diff.clean()
+
     return out

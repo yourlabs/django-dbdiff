@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dbdiff',
+
+    'dbdiff.tests.project.decimal_test',
 )
 
 MIDDLEWARE_CLASSES = (

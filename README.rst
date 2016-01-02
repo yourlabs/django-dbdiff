@@ -47,6 +47,9 @@ django.core.serializers.python.Serializer.get_dump_object() - returns a dict,
 this app registers a slightly modified version of the default json serializer
 which returns OrderedDicts instead.
 
+In addition, dbdiff serialization forces Decimal normalization, because
+trailing zeros could happen in inconsistent ways.
+
 Cross-database fixture compatibility
 ====================================
 
