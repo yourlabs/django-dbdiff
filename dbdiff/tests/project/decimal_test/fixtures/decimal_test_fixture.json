@@ -1,0 +1,16 @@
+[
+{
+    "fields": {
+        "test_field": "1.1"
+    },
+    "model": "decimal_test.testmodel",
+    "pk": 1
+},
+{
+    "fields": {
+        "test_field": "1.10"
+    },
+    "model": "decimal_test.testmodel",
+    "pk": 2
+}
+]
