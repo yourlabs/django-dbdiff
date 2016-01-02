@@ -1,0 +1,49 @@
+sudo: false
+language: python
+python:
+- '3.5'
+env:
+  matrix:
+  - TOXENV=py27-django17-sqlite
+  - TOXENV=py27-django17-mysql
+  - TOXENV=py27-django17-postgresql
+  - TOXENV=py27-django18-sqlite
+  - TOXENV=py27-django18-mysql
+  - TOXENV=py27-django18-postgresql
+  - TOXENV=py27-django19-sqlite
+  - TOXENV=py27-django19-mysql
+  - TOXENV=py27-django19-postgresql
+  - TOXENV=py27-django110-sqlite
+  - TOXENV=py27-django110-mysql
+  - TOXENV=py27-django110-postgresql
+  - TOXENV=py34-django17-sqlite
+  - TOXENV=py34-django17-mysql
+  - TOXENV=py34-django17-postgresql
+  - TOXENV=py34-django18-sqlite
+  - TOXENV=py34-django18-mysql
+  - TOXENV=py34-django18-postgresql
+  - TOXENV=py34-django19-sqlite
+  - TOXENV=py34-django19-mysql
+  - TOXENV=py34-django19-postgresql
+  - TOXENV=py34-django110-sqlite
+  - TOXENV=py34-django110-mysql
+  - TOXENV=py34-django110-postgresql
+  - TOXENV=checkqa
+install:
+- pip install -U pip
+- pip install tox codecov
+script:
+- tox
+after_success:
+- codecov
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+before_cache:
+- rm -f $HOME/.cache/pip/log/debug.log
+notifications:
+  irc:
+    channels:
+    - irc.freenode.org#yourlabs
+    template:
+    - "%{repository} (%{commit} %{author}) : %{message} %{build_url} %{compare_url}"
