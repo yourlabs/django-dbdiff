@@ -7,6 +7,7 @@ import os
 from django import test
 from django.apps import apps
 from django.conf import settings
+from django.contrib.auth.models import Group
 
 import mock
 
@@ -15,6 +16,7 @@ import six
 from . import base
 from .project.decimal_test.models import TestModel as DecimalTestModel
 from .. import dbdiff
+from ..exceptions import DiffFound
 
 
 @mock.patch('dbdiff.dbdiff.FixtureDiff')
@@ -75,6 +77,35 @@ class DiffTest(test.TestCase):
 +        "username": "test"
      },
 ''').lstrip()
+
+
+class ResetModelsTest(test.TestCase):
+    def test_pk_reset(self):
+        fixture = 'dbdiff/fixtures/dbdiff_test_group.json'
+        Group.objects.create(name='noise')
+
+        with dbdiff.exact(fixture):
+            Group.objects.create(name='initial_name')
+
+        with dbdiff.exact(fixture, reset_models=False):
+            pass
+
+        with self.assertRaises(DiffFound) as e:
+            with dbdiff.exact(fixture):
+                Group.objects.create(name='different_name')
+
+        expected = six.b('''
+@@ -3,3 +3,3 @@
+     "fields": {
+-        "name": "initial_name",
++        "name": "different_name",
+         "permissions": []
+''').lstrip()
+
+        if six.PY2:
+            assert e.exception.message == expected
+        else:
+            assert e.exception.args[0] == expected
 
 
 class DecimalDiffTest(test.TestCase):

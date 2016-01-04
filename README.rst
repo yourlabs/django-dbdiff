@@ -80,6 +80,12 @@ Example::
 If any difference is found between the database and the test fixture, then
 ``diff()`` will return the diff as outputed by GNU diff.
 
+A context manager that will raise an exception if a diff is found is also
+provided, it's able to delete models and reset the PK sequences for them::
+
+    with dbdiff.exact('your_app/fixture.json'):
+        # do stuff
+
 More public API tests can be found in dbidff/tests/test_dbdiff.py.
 
 Django model observer
