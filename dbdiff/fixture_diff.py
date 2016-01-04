@@ -70,13 +70,13 @@ class FixtureDiff(object):
                          traceback=True, indent=self.fixture_indent,
                          stdout=f)
 
-        cmd = 'diff -u1 %s %s | sed "1,2 d"' % (
+        self.cmd = 'diff -u1 %s %s | sed "1,2 d"' % (
             self.fixture_path, self.dump_path)
 
         if apps.get_app_config('dbdiff').debug:  # pragma: no cover
-            print(cmd)
+            print(self.cmd)
 
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(self.cmd, stdout=subprocess.PIPE, shell=True)
         out, err = proc.communicate()
 
         return out
