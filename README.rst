@@ -37,9 +37,9 @@ When a bug is fixed, just add the case to the fixture and repeat the process to
 create new expected data dumps, use coverage to ensure no case is missed.
 
 With django-dbdiff, I just need to maintain to initial data extract, and test
-it with ``Fixture.assertNoDiff('appname/path/to/fixture',
-models=[YourModelToTest])`` in a ``django.test.TransactionTestCase`` which has
-``reset_sequences=True``:
+it with ``Fixture('appname/path/to/fixture',
+models=[YourModelToTest]).assertNoDiff()`` in a
+``django.test.TransactionTestCase`` which has ``reset_sequences=True``:
 
 - if the fixture in question doesn't exist, it'll be automatically created on
   with dumpdata for the concerned models on the first run, raising
