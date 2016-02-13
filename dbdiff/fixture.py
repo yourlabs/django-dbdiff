@@ -74,19 +74,20 @@ class Fixture(object):
 
             return len(line) - len(line.lstrip(' '))
 
-    def diff(self):
+    def diff(self, exclude=None):
         """Diff the fixture against a datadump of fixture models."""
-        fh, dump_path = tempfile.mkstemp('_dbdiff')
+        import StringIO
+        import json_delta
+        import json
+        dump = StringIO.StringIO()
+        self.dump(dump)
 
-        with os.fdopen(fh, 'w') as f:
-            self.dump(f)
+        with open(self.path, 'r') as f:
+            expected = f.read()
 
-        cmd, out = diff(self.path, dump_path)
+        diff = "\n".join([i for i in json_delta.udiff(json.loads(dump.getvalue()), json.loads(expected))])
 
-        if not out:
-            os.unlink(dump_path)
-
-        return cmd, out
+        return diff
 
     def load(self):
         """Load fixture into the database."""
