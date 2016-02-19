@@ -7,9 +7,10 @@ from django.apps import apps
 from django.core.management import call_command
 
 import ijson
+import json_delta
 
 from .exceptions import DiffFound, FixtureCreated
-from .utils import diff, get_absolute_path, get_model_names
+from .utils import get_absolute_path, get_model_names
 
 
 class Fixture(object):
@@ -81,12 +82,17 @@ class Fixture(object):
         with os.fdopen(fh, 'w') as f:
             self.dump(f)
 
-        cmd, out = diff(self.path, dump_path)
+        with open(dump_path, 'r') as l, open(self.path, 'r') as r:
+            left, right = l.read(), r.read()
 
-        if not out:
+        diffs = json_delta.load_and_diff(left, right)
+
+        if not len(diffs):
             os.unlink(dump_path)
+            return ''
 
-        return cmd, out
+        diff = json_delta.load_and_udiff(left, right, None, diffs)
+        return '\n'.join(diff)
 
     def load(self):
         """Load fixture into the database."""
@@ -116,10 +122,10 @@ class Fixture(object):
                 self.dump(f)
             raise FixtureCreated(self)
 
-        cmd, out = self.diff()
+        out = self.diff()
 
         if out:
-            raise DiffFound(cmd, out)
+            raise DiffFound('', out)
 
     def __str__(self):
         """Return :py:attr:`path` for string representation."""
