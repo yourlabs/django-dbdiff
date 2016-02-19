@@ -22,7 +22,7 @@ setup(
     long_description=read('README.rst'),
     license='MIT',
     keywords='django test database fixture diff',
-    install_requires=['ijson', 'six'],
+    install_requires=['ijson', 'json_delta', 'six'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
