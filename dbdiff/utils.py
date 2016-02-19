@@ -2,18 +2,76 @@
 
 import imp
 import os
-import subprocess
 
 from django.apps import apps
 from django.db import connections
 
 
-def diff(first, second):
-    """Return the command and diff output between first and second paths."""
-    cmd = 'diff -u1 %s %s | sed "1,2 d"' % (first, second)
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-    out, err = proc.communicate()
-    return cmd, out
+def get_tree(dump, exclude=None):
+    """Return a tree of model -> pk -> fields."""
+    exclude = exclude or {}
+    tree = {}
+
+    for instance in dump:
+        if instance['model'] not in tree:
+            tree[instance['model']] = {}
+
+        exclude_fields = exclude.get(instance['model'], [])
+        tree[instance['model']][instance['pk']] = {
+            name: value for name, value in instance['fields'].items()
+            if name not in exclude_fields
+        }
+
+    return tree
+
+
+def _get_unexpected(expected, result):
+    unexpected = {}
+
+    for model, result_instances in result.items():
+        expected_pks = expected.get(model, {}).keys()
+
+        for pk, result_fields in result_instances.items():
+            if pk in expected_pks:
+                continue
+
+            unexpected.setdefault(model, {})
+            unexpected[model][pk] = result_fields
+
+    return unexpected
+
+
+def diff(expected, result):
+    """Return unexpected, missing and diff between expected and result."""
+    missing, diff = {}, {}
+
+    unexpected = _get_unexpected(expected, result)
+
+    for model, expected_instances in expected.items():
+        for pk, expected_fields in expected_instances.items():
+            if pk not in result.get(model, {}):
+                missing.setdefault(model, {})
+                missing[model][pk] = expected_fields
+                continue
+
+            result_fields = result[model][pk]
+            if expected_fields == result_fields:
+                continue
+
+            diff.setdefault(model, {})
+            diff[model].setdefault(pk, {})
+
+            for expected_field, expected_value in expected_fields.items():
+                result_value = result_fields[expected_field]
+
+                if expected_value == result_value:
+                    continue
+
+                diff[model][pk][expected_field] = (
+                    expected_value,
+                    result_value
+                )
+    return unexpected, missing, diff
 
 
 def get_absolute_path(path):
