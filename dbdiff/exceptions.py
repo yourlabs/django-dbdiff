@@ -1,4 +1,5 @@
 """Exceptions for dbdiff module."""
+import pprint
 
 
 class DbDiffException(Exception):
@@ -8,9 +9,53 @@ class DbDiffException(Exception):
 class DiffFound(DbDiffException):
     """Raised when a diff is found by the context manager."""
 
-    def __init__(self, cmd, out):
-        """Exception for when a diff command had output."""
-        super(DiffFound, self).__init__('%s\n%s' % (cmd, out.decode('utf8')))
+    def _add_messages(self, msg, title, tree):
+        if tree:
+            for model, instances in tree.items():
+                msg.append(
+                    title % (
+                        len(instances),
+                        model
+                    )
+                )
+
+                for pk, fields in instances.items():
+                    msg.append('#%s:\n%s' % (pk, pprint.pformat(fields)))
+
+    def __init__(self, fixture, unexpected, missing, diff):
+        """Exception for when a diff was found."""
+        msg = ['Diff found with dump at %s' % fixture.path]
+
+        self._add_messages(
+            msg,
+            '%s unexpected instance(s) of %s found in the dump:',
+            unexpected
+        )
+
+        self._add_messages(
+            msg,
+            '%s expected instance(s) of %s missing from dump:',
+            missing
+        )
+
+        if diff:
+            for model, instances in diff.items():
+                msg.append(
+                    '%s instance(s) of %s have not expected fields' % (
+                        len(instances),
+                        model
+                    )
+                )
+
+                for pk, fields in instances.items():
+                    msg.append('#%s:' % pk)
+
+                    for field, values in fields.items():
+                        msg.append('  %s:' % field)
+                        msg.append('- %s' % pprint.pformat(values[0]))
+                        msg.append('+ %s' % pprint.pformat(values[1]))
+
+        super(DiffFound, self).__init__('\n'.join(msg))
 
 
 class FixtureCreated(DbDiffException):

@@ -1,5 +1,6 @@
 """Public fixture API."""
 
+import json
 import os
 import tempfile
 
@@ -9,7 +10,12 @@ from django.core.management import call_command
 import ijson
 
 from .exceptions import DiffFound, FixtureCreated
-from .utils import diff, get_absolute_path, get_model_names
+from .utils import (
+    diff,
+    get_absolute_path,
+    get_model_names,
+    get_tree,
+)
 
 
 class Fixture(object):
@@ -74,19 +80,31 @@ class Fixture(object):
 
             return len(line) - len(line.lstrip(' '))
 
-    def diff(self):
-        """Diff the fixture against a datadump of fixture models."""
+    def diff(self, exclude=None):
+        """
+        Diff the fixture against a datadump of fixture models.
+
+        If passed, exclude should be a list of field names to exclude from
+        being diff'ed.
+        """
         fh, dump_path = tempfile.mkstemp('_dbdiff')
 
         with os.fdopen(fh, 'w') as f:
             self.dump(f)
 
-        cmd, out = diff(self.path, dump_path)
+        with open(self.path, 'r') as e, open(dump_path, 'r') as r:
+            expected, result = json.load(e), json.load(r)
 
-        if not out:
+        unexpected, missing, different = diff(
+            get_tree(expected, exclude),
+            get_tree(result, exclude),
+        )
+
+        if not unexpected and not missing and not diff:
             os.unlink(dump_path)
+            return None
 
-        return cmd, out
+        return unexpected, missing, different
 
     def load(self):
         """Load fixture into the database."""
@@ -103,7 +121,7 @@ class Fixture(object):
             stdout=out
         )
 
-    def assertNoDiff(self):  # noqa
+    def assertNoDiff(self, exclude=None):  # noqa
         """Assert that the fixture doesn't have any diff with the database.
 
         If the fixture doesn't exist then it's written but
@@ -116,10 +134,10 @@ class Fixture(object):
                 self.dump(f)
             raise FixtureCreated(self)
 
-        cmd, out = self.diff()
+        unexpected, missing, different = self.diff(exclude=exclude)
 
-        if out:
-            raise DiffFound(cmd, out)
+        if unexpected or missing or different:
+            raise DiffFound(self, unexpected, missing, different)
 
     def __str__(self):
         """Return :py:attr:`path` for string representation."""

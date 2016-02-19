@@ -57,13 +57,18 @@ class SmokeTest(test.TransactionTestCase):
             fixture.assertNoDiff()
 
         expected = '''
-@@ -3,3 +3,3 @@
-     "fields": {
--        "name": "testgroup",
-+        "name": "BOOM",
-         "permissions": []
-'''.lstrip()
+1 instance(s) of auth.group have not expected fields
+#1:
+  name:
+- u'testgroup'
++ u'BOOM'
+'''
 
+        if six.PY3:
+            expected = expected.replace("u'", "'")
         diff = e.exception.message if six.PY2 else e.exception.args[0]
         result = '\n'.join(diff.split('\n')[1:])
-        assert result == expected
+        assert result.strip() == expected.strip()
+
+        # Excluding the name parameter, there should be no diff
+        fixture.assertNoDiff(exclude={'auth.group': ['name']})
