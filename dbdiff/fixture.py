@@ -7,6 +7,7 @@ from django.apps import apps
 from django.core.management import call_command
 
 import ijson
+import json
 import json_delta
 
 from .exceptions import DiffFound, FixtureCreated
@@ -75,23 +76,34 @@ class Fixture(object):
 
             return len(line) - len(line.lstrip(' '))
 
-    def diff(self):
-        """Diff the fixture against a datadump of fixture models."""
+    def diff(self, exclude=None):
+        """
+        Diff the fixture against a datadump of fixture models.
+
+        If passed, exclude should be a list of field names to exclude from
+        being diff'ed.
+        """
         fh, dump_path = tempfile.mkstemp('_dbdiff')
 
         with os.fdopen(fh, 'w') as f:
             self.dump(f)
 
         with open(dump_path, 'r') as l, open(self.path, 'r') as r:
-            left, right = l.read(), r.read()
+            left, right = json.load(l), json.load(r)
 
-        diffs = json_delta.load_and_diff(left, right)
+        if exclude is not None:
+            for data in (left, right):
+                for model in data:
+                    for field in exclude:
+                        model['fields'].pop(field)
+
+        diffs = json_delta.diff(left, right, verbose=False)
 
         if not len(diffs):
             os.unlink(dump_path)
             return ''
 
-        diff = json_delta.load_and_udiff(left, right, None, diffs)
+        diff = json_delta.udiff(left, right, patch=diffs)
         return '\n'.join(diff)
 
     def load(self):
@@ -109,7 +121,7 @@ class Fixture(object):
             stdout=out
         )
 
-    def assertNoDiff(self):  # noqa
+    def assertNoDiff(self, exclude=None):  # noqa
         """Assert that the fixture doesn't have any diff with the database.
 
         If the fixture doesn't exist then it's written but
@@ -122,7 +134,7 @@ class Fixture(object):
                 self.dump(f)
             raise FixtureCreated(self)
 
-        out = self.diff()
+        out = self.diff(exclude=exclude)
 
         if out:
             raise DiffFound('', out)

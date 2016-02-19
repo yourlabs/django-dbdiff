@@ -75,3 +75,6 @@ class SmokeTest(test.TransactionTestCase):
         diff = e.exception.message if six.PY2 else e.exception.args[0]
         result = '\n'.join(diff.split('\n')[1:])
         assert result.strip() == expected.strip()
+
+        # Excluding the name parameter, there should be no diff
+        fixture.assertNoDiff(exclude=['name'])
