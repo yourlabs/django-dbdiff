@@ -17,6 +17,8 @@ def get_tree(dump, exclude=None):
             tree[instance['model']] = {}
 
         exclude_fields = exclude.get(instance['model'], [])
+        exclude_fields += exclude.get('*', [])
+
         tree[instance['model']][instance['pk']] = {
             name: value for name, value in instance['fields'].items()
             if name not in exclude_fields
