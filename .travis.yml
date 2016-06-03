@@ -4,9 +4,6 @@ python:
 - '3.5'
 env:
   matrix:
-  - TOXENV=py27-django17-sqlite
-  - TOXENV=py27-django17-mysql
-  - TOXENV=py27-django17-postgresql
   - TOXENV=py27-django18-sqlite
   - TOXENV=py27-django18-mysql
   - TOXENV=py27-django18-postgresql
@@ -16,9 +13,6 @@ env:
   - TOXENV=py27-django110-sqlite
   - TOXENV=py27-django110-mysql
   - TOXENV=py27-django110-postgresql
-  - TOXENV=py34-django17-sqlite
-  - TOXENV=py34-django17-mysql
-  - TOXENV=py34-django17-postgresql
   - TOXENV=py34-django18-sqlite
   - TOXENV=py34-django18-mysql
   - TOXENV=py34-django18-postgresql
