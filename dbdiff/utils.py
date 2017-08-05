@@ -6,6 +6,8 @@ import os
 from django.apps import apps
 from django.db import connections
 
+import six
+
 
 def get_tree(dump, exclude=None):
     """Return a tree of model -> pk -> fields."""
@@ -90,8 +92,11 @@ def get_absolute_path(path):
 
 def get_model_names(model_classes):
     """Return model names for model classes."""
-    return ['%s.%s' % (m._meta.app_label, m._meta.model_name)
-            for m in model_classes]
+    return [
+        m if isinstance(m, six.string_types)
+        else '%s.%s' % (m._meta.app_label, m._meta.model_name)
+        for m in model_classes
+    ]
 
 
 def get_models_tables(models):
