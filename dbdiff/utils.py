@@ -83,7 +83,10 @@ def get_absolute_path(path):
     if path.startswith('/'):
         return path
 
-    module_path = imp.find_module(path.split('/')[0])[1]
+    if path.startswith('.'):
+        module_path = '.'
+    else:
+        module_path = imp.find_module(path.split('/')[0])[1]
     return os.path.abspath(os.path.join(
         module_path,
         *path.split('/')[1:]
