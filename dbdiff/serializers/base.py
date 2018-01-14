@@ -61,7 +61,10 @@ class BaseSerializerMixin(object):
             if not isinstance(value, decimal.Decimal):
                 continue
 
-            data['fields'][key] = value.normalize()
+            if value % 1 == 0:
+                data['fields'][key] = int(value)
+            else:
+                data['fields'][key] = value.normalize()
 
     def get_dump_object(self, obj):
         """
