@@ -57,10 +57,18 @@
 },
 {
     "fields": {
+        "app_label": "nonintpk",
+        "model": "nonintpk"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 8
+},
+{
+    "fields": {
         "app_label": "",
         "model": ""
     },
     "model": "contenttypes.contenttype",
-    "pk": 8
+    "pk": 9
 }
 ]
