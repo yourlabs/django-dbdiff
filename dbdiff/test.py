@@ -1,6 +1,6 @@
 """Convenience test mixin."""
 from django.core.management import call_command
-from django.db import connection
+from django.db import connection, models
 
 from .fixture import Fixture
 
@@ -46,15 +46,30 @@ class DbdiffTestMixin(object):
 
         for model in self.dbdiff_models:
             if connection.vendor == 'postgresql':
+                pk_field = None
+                for field in model._meta.get_fields():
+                    if getattr(field, 'primary_key', False):
+                        pk_field = field
+                        break
+
+                if not isinstance(pk_field, models.AutoField):
+                    continue
+
+                if not pk_field.db_column:
+                    continue
+
                 reset = """
                 SELECT
                     setval(
-                        pg_get_serial_sequence('%s', 'id'),
-                        coalesce(max(id),0) + 1,
+                        pg_get_serial_sequence('%(table)s', '%(column)s'),
+                        coalesce(max(%(column)s),0) + 1,
                         false
                     )
-                FROM %s
-                """ % (model._meta.db_table, model._meta.db_table)
+                FROM %(table)s
+                """ % dict(
+                    table=model._meta.db_table,
+                    column=pk_field.db_column,
+                )
             else:
                 raise NotImplemented()
             connection.cursor().execute(reset)
