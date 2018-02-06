@@ -118,7 +118,8 @@ class Fixture(object):
             format='json',
             traceback=True,
             indent=self.indent,
-            stdout=out
+            stdout=out,
+            use_natural_foreign_keys=True,
         )
 
     def assertNoDiff(self, exclude=None):  # noqa
