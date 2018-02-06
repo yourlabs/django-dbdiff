@@ -119,7 +119,7 @@ class Fixture(object):
             traceback=True,
             indent=self.indent,
             stdout=out,
-            use_natural_foreign_keys=True,
+            use_natural_foreign_keys=True
         )
 
     def assertNoDiff(self, exclude=None):  # noqa

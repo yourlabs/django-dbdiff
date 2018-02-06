@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'dbdiff',
 
     'dbdiff.tests.decimal_test',
+    'dbdiff.tests.nonintpk',
 )
 
 MIDDLEWARE_CLASSES = (

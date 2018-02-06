@@ -23,6 +23,7 @@ setup(
     license='MIT',
     keywords='django test database fixture diff',
     install_requires=['ijson', 'json_delta', 'six'],
+    entry_points={'pytest11': ['dbdiff = dbdiff.plugin']},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
