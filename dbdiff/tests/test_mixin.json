@@ -65,10 +65,26 @@
 },
 {
     "fields": {
+        "app_label": "inheritance",
+        "model": "parent"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 9
+},
+{
+    "fields": {
+        "app_label": "inheritance",
+        "model": "child"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 10
+},
+{
+    "fields": {
         "app_label": "",
         "model": ""
     },
     "model": "contenttypes.contenttype",
-    "pk": 9
+    "pk": 11
 }
 ]

@@ -19,7 +19,7 @@ env:
   - TOXENV=py36-django20-sqlite
   - TOXENV=py36-django20-mysql
   - TOXENV=py36-django20-postgresql
-  - TOXENV=checkqa
+  - TOXENV=qa
 install:
 - pip install -U pip
 - pip install tox codecov
