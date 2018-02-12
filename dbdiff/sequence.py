@@ -9,7 +9,8 @@ def pk_sequence_get(model):
             continue
         if not isinstance(field, models.AutoField):
             continue
-        return field.db_column or field.column
+        return (field.db_column or field.column, field.model._meta.db_table)
+    return (None, None)
 
 
 def sequence_reset(model):
@@ -21,7 +22,7 @@ def sequence_reset(model):
     supporting pre-existing models which could have been created by a
     migration.
     """
-    pk_field = pk_sequence_get(model)
+    pk_field, table = pk_sequence_get(model)
     if not pk_field:
         return
 
@@ -45,12 +46,12 @@ def sequence_reset(model):
         cursor = connection.cursor()
         cursor.execute(
             'SELECT MAX({column}) + 1 FROM {table}'.format(
-                column=pk_field, table=model._meta.db_table
+                column=pk_field, table=table
             )
         )
         result = cursor.fetchone()[0] or 0
         reset = 'ALTER TABLE {table} AUTO_INCREMENT = %s' % result
 
     connection.cursor().execute(
-        reset.format(column=pk_field, table=model._meta.db_table)
+        reset.format(column=pk_field, table=table)
     )
