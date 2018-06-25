@@ -9,8 +9,6 @@ the DbdiffTestMixin in pytest, example usage::
 """
 import pytest
 
-from pytest_django.pytest_compat import getfixturevalue
-
 from .sequence import sequence_reset
 
 
@@ -21,7 +19,7 @@ def _dbdiff_marker(request):
         return
 
     # Enable transactional db
-    getfixturevalue(request, 'transactional_db')
+    request.getfixturevalue('transactional_db')
 
     for model in marker.kwargs['models']:
         sequence_reset(model)
