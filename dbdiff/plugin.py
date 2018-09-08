@@ -21,7 +21,7 @@ def _dbdiff_marker(request):
     # Enable transactional db
     request.getfixturevalue('transactional_db')
 
-    for model in marker.kwargs['models']:
+    for model in request.node.get_closest_marker('models'):
         sequence_reset(model)
 
 
