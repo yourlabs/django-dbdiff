@@ -14,7 +14,7 @@ from .sequence import sequence_reset
 
 @pytest.fixture(autouse=True)
 def _dbdiff_marker(request):
-    marker = request.keywords.get('dbdiff', None)
+    marker = request.node.get_closest_marker('dbdiff')
     if not marker:
         return
 
