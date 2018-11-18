@@ -19,6 +19,9 @@ env:
   - TOXENV=py36-django20-sqlite
   - TOXENV=py36-django20-mysql
   - TOXENV=py36-django20-postgresql
+  - TOXENV=py36-django21-sqlite
+  - TOXENV=py36-django21-mysql
+  - TOXENV=py36-django21-postgresql
   - TOXENV=qa
 install:
 - pip install -U pip
