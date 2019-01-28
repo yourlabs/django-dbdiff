@@ -18,6 +18,9 @@ from .utils import (
 )
 
 
+REWRITE = os.getenv('FIXTURE_REWRITE')
+
+
 class Fixture(object):
     """
     Is able to print out diffs between database and a fixture.
@@ -130,10 +133,11 @@ class Fixture(object):
 
         If a diff was found it will raise :py:class:`~exceptions.DiffFound`.
         """
-        if not self.exists:
+        if REWRITE or not self.exists:
             with open(self.path, 'w+') as f:
                 self.dump(f)
-            raise FixtureCreated(self)
+            if not REWRITE:
+                raise FixtureCreated(self)
 
         unexpected, missing, different = self.diff(exclude=exclude)
 
