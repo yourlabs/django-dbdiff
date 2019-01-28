@@ -75,6 +75,11 @@ run though, it will pass.
 If any difference is found between the database and the test fixture, then
 ``diff()`` will return the diff as outputed by GNU diff.
 
+Instead of deleting the fixtures manually before running the tests to
+regenerate them, just run your tests with FIXTURE_REWRITE=1 environment
+variable. This will overwrite the fixtures and make the tests look like it
+passed.
+
 See tests and docstrings for crunchy details.
 
 Requirements
