@@ -1,3 +1,7 @@
+0.9.4 Fixes missing upstream commits in 0.9.3
+
+0.9.3 Add FIXTURE_REWRITE env var
+
 0.9.0 Pytest-django plugin update
 
 0.8.1 Model inheritance support

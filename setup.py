@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name='django-dbdiff',
-    version='0.9.3',
+    version='0.9.4',
     description='Database data diffing against fixtures for testing',
     author='James Pic',
     author_email='jamespic@gmail.com',
