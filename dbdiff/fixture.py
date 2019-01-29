@@ -1,5 +1,6 @@
 """Public fixture API."""
 
+import copy
 import json
 import os
 import tempfile
@@ -36,7 +37,14 @@ class Fixture(object):
     .. py:attribute:: database
 
         Database name to use, 'default' by default.
+
+    .. py:attribute:: exclude
+
+        Class attribute, dict of model fields to ignore in the form of:
+        {'app.model': ['fieldN']}
     """
+
+    exclude = dict()
 
     def __init__(self, relative_path, models=None, database=None):
         """
@@ -92,6 +100,9 @@ class Fixture(object):
         """
         fh, dump_path = tempfile.mkstemp('_dbdiff')
 
+        exclude_final = copy.copy(self.exclude)
+        exclude_final.update(exclude or {})
+
         with os.fdopen(fh, 'w') as f:
             self.dump(f)
 
@@ -99,8 +110,8 @@ class Fixture(object):
             expected, result = json.load(e), json.load(r)
 
         unexpected, missing, different = diff(
-            get_tree(expected, exclude),
-            get_tree(result, exclude),
+            get_tree(expected, exclude_final),
+            get_tree(result, exclude_final),
         )
 
         if not unexpected and not missing and not diff:

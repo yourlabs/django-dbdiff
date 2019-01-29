@@ -53,7 +53,9 @@ models=[YourModelToTest]).assertNoDiff()`` in a
 Usage
 =====
 
-Example::
+Example:
+
+.. code-block:: python
 
     from django import TransactionTestCase
     from dbdiff.fixture import Fixture
@@ -74,6 +76,12 @@ run though, it will pass.
 
 If any difference is found between the database and the test fixture, then
 ``diff()`` will return the diff as outputed by GNU diff.
+
+If you need to ignore fields globally, set the class-level variable exclude as such:
+
+.. code-block:: python
+
+   Fixture.exclude = {'mrsrequest.mrsrequest': ['token']}
 
 Instead of deleting the fixtures manually before running the tests to
 regenerate them, just run your tests with FIXTURE_REWRITE=1 environment
