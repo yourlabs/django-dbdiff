@@ -4,23 +4,13 @@ python:
 - '3.6'
 env:
   matrix:
-  - TOXENV=py27-django18-sqlite
-  - TOXENV=py27-django18-mysql
-  - TOXENV=py27-django18-postgresql
   - TOXENV=py27-django111-sqlite
-  - TOXENV=py27-django111-mysql
   - TOXENV=py27-django111-postgresql
-  - TOXENV=py36-django18-sqlite
-  - TOXENV=py36-django18-mysql
-  - TOXENV=py36-django18-postgresql
   - TOXENV=py36-django111-sqlite
-  - TOXENV=py36-django111-mysql
   - TOXENV=py36-django111-postgresql
   - TOXENV=py36-django20-sqlite
-  - TOXENV=py36-django20-mysql
   - TOXENV=py36-django20-postgresql
   - TOXENV=py36-django21-sqlite
-  - TOXENV=py36-django21-mysql
   - TOXENV=py36-django21-postgresql
   - TOXENV=qa
 install:
