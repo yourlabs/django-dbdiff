@@ -93,8 +93,8 @@ See tests and docstrings for crunchy details.
 Requirements
 ============
 
-MySQL, SQLite and PostgreSQL, Python 2.7 and 3.4 are supported along with
-Django 1.7 to 1.10 - it's always better to support django's master so that we
+MySQL, SQLite and PostgreSQL, Python 3.8 to 3.12 are supported along with
+Django 3.2 to 5.0 - it's always better to support django's master so that we
 can **upgrade easily when it is released**, which is one of the selling points
 for having 100% coverage.
 

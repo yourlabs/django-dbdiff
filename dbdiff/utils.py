@@ -1,13 +1,11 @@
 """Utils for dbdiff."""
 
-import imp
 import os
 
 from django.apps import apps
 from django.db import connections
 
-import six
-
+from importlib.util import find_spec
 
 def get_tree(dump, exclude=None):
     """Return a tree of model -> pk -> fields."""
@@ -86,7 +84,8 @@ def get_absolute_path(path):
     if path.startswith('.'):
         module_path = '.'
     else:
-        module_path = imp.find_module(path.split('/')[0])[1]
+        module_path = find_spec(path.split('/')[0]).submodule_search_locations[0]
+
     return os.path.abspath(os.path.join(
         module_path,
         *path.split('/')[1:]
@@ -96,7 +95,7 @@ def get_absolute_path(path):
 def get_model_names(model_classes):
     """Return model names for model classes."""
     return [
-        m if isinstance(m, six.string_types)
+        m if isinstance(m, str)
         else '%s.%s' % (m._meta.app_label, m._meta.model_name)
         for m in model_classes
     ]

@@ -1,7 +1,35 @@
 __pycache__
-*pyc
-*egg-info
-.tox
+.venv
+.Python
+*.pyc
+*.orig
+.cache/
+*,cover
 .coverage
-.cache
+.tox/
+.idea/
+*.sqlite
+
+*.egg-info
+build/
+dist/
+venv/
+*.egg/
+src/cities_light/version.py
+
+# Ignore the downloaded data.
+src/cities_light/data/
+
+# vscode & codespaces
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+pythonenv3.8/
+
+# Local History for Visual Studio Code
+.history/
+
 dbdiff/tests/db.sqlite3
