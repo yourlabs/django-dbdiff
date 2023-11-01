@@ -1,14 +1,10 @@
 """Public API tests."""
 
-from __future__ import unicode_literals
-
 import os
 import tempfile
 
 from django import test
 from django.contrib.auth.models import Group
-
-import six
 
 from ..exceptions import DiffFound, FixtureCreated
 from ..fixture import Fixture
@@ -57,8 +53,8 @@ class SmokeTest(test.TransactionTestCase):
 1 instance(s) of auth.group have not expected fields
 #1:
   name:
-- u'testgroup'
-+ u'BOOM'
+- 'testgroup'
++ 'BOOM'
 '''
 
         with self.assertRaises(DiffFound) as result:
@@ -73,12 +69,12 @@ class SmokeTest(test.TransactionTestCase):
         expected = '''
 1 unexpected instance(s) of auth.group found in the dump:
 #2:
-{u'name': u'unexpected', u'permissions': []}
+{'name': 'unexpected', 'permissions': []}
 1 instance(s) of auth.group have not expected fields
 #1:
   name:
-- u'testgroup'
-+ u'BOOM'
+- 'testgroup'
++ 'BOOM'
 '''
 
         with self.assertRaises(DiffFound) as result:
@@ -90,10 +86,10 @@ class SmokeTest(test.TransactionTestCase):
         expected = '''
 1 unexpected instance(s) of auth.group found in the dump:
 #2:
-{u'name': u'unexpected', u'permissions': []}
+{'name': 'unexpected', 'permissions': []}
 1 expected instance(s) of auth.group missing from dump:
 #1:
-{u'name': u'testgroup', u'permissions': []}
+{'name': 'testgroup', 'permissions': []}
 '''
 
         with self.assertRaises(DiffFound) as result:
@@ -101,13 +97,6 @@ class SmokeTest(test.TransactionTestCase):
         self.assert_message_is(expected, result)
 
     def assert_message_is(self, expected, result):
-        if six.PY3:
-            expected = expected.replace("u'", "'")
-
-        msg = (
-            result.exception.message
-            if six.PY2 else result.exception.args[0]
-        )
-
+        msg = result.exception.args[0]
         out = '\n'.join(msg.split('\n')[1:])
         assert out.strip() == expected.strip()
