@@ -73,6 +73,14 @@ def diff(expected, result):
                     expected_value,
                     result_value
                 )
+
+            for result_field in result_fields.keys():
+                if result_field not in expected_fields.keys():
+                    diff[model][pk][result_field] = (
+                        'Field not in fixture, perhaps it is a new field ?',
+                        result_value
+                    )
+
     return unexpected, missing, diff
 
 
