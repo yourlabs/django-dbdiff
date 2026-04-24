@@ -1,5 +1,5 @@
-.. image:: https://github.com/yourlabs/django-dbdiff/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/yourlabs/django-dbdiff/actions/workflows/tests.yml
+.. image:: https://github.com/yourlabs/django-dbdiff/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/yourlabs/django-dbdiff/actions/workflows/ci.yml
 .. image:: https://codecov.io/gh/yourlabs/django-dbdiff/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/yourlabs/django-dbdiff
 .. image:: https://badge.fury.io/py/django-dbdiff.png
