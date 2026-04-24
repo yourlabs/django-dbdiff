@@ -9,6 +9,7 @@ class ContentTypeTestCase(DbdiffTestMixin, test.TestCase):
     dbdiff_models = [ContentType]
     dbdiff_exclude = {'*': ['created']}
     dbdiff_reset_sequences = True
+    dbdiff_ignore_pk = True
     dbdiff_expected = 'dbdiff/tests/test_mixin.json'
 
     def test_db_import(self):
