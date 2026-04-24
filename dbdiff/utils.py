@@ -155,26 +155,39 @@ def get_models_tables(models):
 
 def patch_transaction_test_case():
     """Monkeypatch TransactionTestCase._reset_sequences to support SQLite."""
+    import inspect
+
     from django.test.testcases import TransactionTestCase
-    TransactionTestCase.old_reset_sequences = \
-        TransactionTestCase._reset_sequences
 
-    def new_reset_sequences(self, db_name):
-        self.old_reset_sequences(db_name)
+    raw = inspect.getattr_static(TransactionTestCase, '_reset_sequences')
+
+    def _sqlite_reset(db_name):
         connection = connections[db_name]
-
         if connection.vendor != 'sqlite':
             return
-
         tables = get_models_tables(apps.get_models())
         statements = [
             "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='%s';" % t
             for t in tables
         ]
-
         cursor = connection.cursor()
-
         for statement in statements:
             cursor.execute(statement)
+
+    if isinstance(raw, classmethod):
+        # Django 5.x: _reset_sequences is a classmethod
+        _original = TransactionTestCase._reset_sequences
+
+        @classmethod
+        def new_reset_sequences(cls, db_name):  # noqa: N805
+            _original(db_name)
+            _sqlite_reset(db_name)
+    else:
+        # Django 4.x: _reset_sequences is a regular instance method
+        _original = raw
+
+        def new_reset_sequences(self, db_name):
+            _original(self, db_name)
+            _sqlite_reset(db_name)
 
     TransactionTestCase._reset_sequences = new_reset_sequences

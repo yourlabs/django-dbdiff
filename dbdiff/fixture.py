@@ -68,7 +68,7 @@ class Fixture(object):
 
     def parse_models(self):
         """Return the list of models inside the fixture file."""
-        with open(self.path, 'r') as f:
+        with open(self.path, 'rb') as f:
             return [apps.get_model(i.lower())
                     for i in ijson.items(f, 'item.model')]
 
@@ -159,8 +159,11 @@ class Fixture(object):
             if not REWRITE:
                 raise FixtureCreated(self)
 
-        unexpected, missing, different = self.diff(exclude=exclude)
+        result = self.diff(exclude=exclude)
+        if result is None:
+            return
 
+        unexpected, missing, different = result
         if unexpected or missing or different:
             raise DiffFound(self, unexpected, missing, different)
 
