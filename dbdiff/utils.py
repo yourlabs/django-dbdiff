@@ -1,11 +1,11 @@
 """Utils for dbdiff."""
 
 import os
+from importlib.util import find_spec
 
 from django.apps import apps
 from django.db import connections
 
-from importlib.util import find_spec
 
 def get_tree(dump, exclude=None):
     """Return a tree of model -> pk -> fields."""
@@ -43,7 +43,7 @@ def _get_unexpected(expected, result):
     return unexpected
 
 
-def diff(expected, result, ignore_pk=False):
+def diff(expected, result, ignore_pk=False):  # noqa: C901
     """Return unexpected, missing and diff between expected and result.
 
     When ignore_pk is True, records are matched by their field values (content)
@@ -85,7 +85,7 @@ def diff(expected, result, ignore_pk=False):
     return unexpected, missing, different
 
 
-def _diff_by_content(expected, result):
+def _diff_by_content(expected, result):  # noqa: C901
     """Diff by matching records on field content instead of primary key."""
     unexpected, missing, different = {}, {}, {}
 
@@ -123,7 +123,8 @@ def get_absolute_path(path):
     if path.startswith('.'):
         module_path = '.'
     else:
-        module_path = find_spec(path.split('/')[0]).submodule_search_locations[0]
+        spec = find_spec(path.split('/')[0])
+        module_path = spec.submodule_search_locations[0]
 
     return os.path.abspath(os.path.join(
         module_path,

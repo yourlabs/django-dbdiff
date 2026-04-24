@@ -9,8 +9,7 @@ from .utils import patch_transaction_test_case
 
 
 class DefaultConfig(AppConfig):
-    """
-    Register patched serializers and patch TransactionTestCase for sqlite.
+    """Register patched serializers and patch TransactionTestCase for sqlite.
 
     .. py:attribute:: debug
 
@@ -23,8 +22,7 @@ class DefaultConfig(AppConfig):
     default_indent = 4
 
     def ready(self):
-        """
-        Register dbdiff.serializers.json and set debug.
+        """Register dbdiff.serializers.json and set debug.
 
         Enables debug if a DBDIFF_DEBUG environment variable is found.
 

@@ -51,10 +51,11 @@ line-length = 79
 [tool.ruff.lint]
 select = ["E", "W", "F", "C90", "T10", "I", "D", "N"]
 # D203 (blank-line-before-docstring) conflicts with D211; D213 conflicts with D212
-ignore = ["D203", "D213"]
+ignore = ["D203", "D213", "N818"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 7
 
 [tool.ruff.lint.per-file-ignores]
 "dbdiff/tests/**/*.py" = ["D100", "D101", "D102", "D103"]
+"dbdiff/tests/**/migrations/**" = ["D", "E501", "I"]

@@ -14,8 +14,7 @@ def pk_sequence_get(model):
 
 
 def sequence_reset(model):
-    """
-    Better sequence reset than TransactionTestCase.
+    """Better sequence reset than TransactionTestCase.
 
     The difference with using TransactionTestCase with reset_sequences=True is
     that this will reset sequences for the given models to their higher value,

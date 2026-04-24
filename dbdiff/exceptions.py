@@ -59,8 +59,7 @@ class DiffFound(DbDiffException):
 
 
 class FixtureCreated(DbDiffException):
-    """
-    Raised when a fixture was created.
+    """Raised when a fixture was created.
 
     This purposely fails a test, to avoid misleading the user into thinking
     that the test was properly executed against a versioned fixture. Imagine

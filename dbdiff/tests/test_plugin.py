@@ -1,8 +1,8 @@
+import pytest
+
 from dbdiff.tests.decimal_test.models import TestModel as DecimalModel
 from dbdiff.tests.inheritance.models import Child, Parent
 from dbdiff.tests.nonintpk.models import Nonintpk
-
-import pytest
 
 
 @pytest.mark.dbdiff(models=[DecimalModel])

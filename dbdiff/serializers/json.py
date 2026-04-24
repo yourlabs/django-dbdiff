@@ -4,7 +4,6 @@ from django.core.serializers import json as upstream
 
 from .base import BaseSerializerMixin
 
-
 __all__ = ('Serializer', 'Deserializer')
 
 

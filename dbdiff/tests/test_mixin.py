@@ -1,8 +1,8 @@
-from dbdiff.test import DbdiffTestMixin
-
 from django import test
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
+
+from dbdiff.test import DbdiffTestMixin
 
 
 class ContentTypeTestCase(DbdiffTestMixin, test.TestCase):

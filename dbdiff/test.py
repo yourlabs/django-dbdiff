@@ -6,8 +6,7 @@ from .sequence import sequence_reset
 
 
 class DbdiffTestMixin(object):
-    """
-    Convenience mixin with better sequence resetting than TransactionTestCase.
+    """Mixin with better sequence resetting than TransactionTestCase.
 
     The difference with using TransactionTestCase with reset_sequences=True is
     that this will reset sequences for the given models to their higher value,

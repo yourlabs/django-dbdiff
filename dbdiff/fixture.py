@@ -5,10 +5,9 @@ import json
 import os
 import tempfile
 
+import ijson
 from django.apps import apps
 from django.core.management import call_command
-
-import ijson
 
 from .exceptions import DiffFound, FixtureCreated
 from .utils import (
@@ -18,13 +17,11 @@ from .utils import (
     get_tree,
 )
 
-
 REWRITE = os.getenv('FIXTURE_REWRITE')
 
 
 class Fixture(object):
-    """
-    Is able to print out diffs between database and a fixture.
+    """Is able to print out diffs between database and a fixture.
 
     .. py:attribute:: path
 
@@ -46,9 +43,10 @@ class Fixture(object):
 
     exclude = dict()
 
-    def __init__(self, relative_path, models=None, database=None, ignore_pk=False):
-        """
-        Instanciate a FixtureDiff on a database.
+    def __init__(
+        self, relative_path, models=None, database=None, ignore_pk=False
+    ):
+        """Instanciate a FixtureDiff on a database.
 
         relative_path is used to calculate :py:attr:`path`, with
         :py:func:`~utils.get_absolute_path`.
@@ -97,8 +95,7 @@ class Fixture(object):
             return len(line) - len(line.lstrip(' '))
 
     def diff(self, exclude=None, ignore_pk=None):
-        """
-        Diff the fixture against a datadump of fixture models.
+        """Diff the fixture against a datadump of fixture models.
 
         If passed, exclude should be a list of field names to exclude from
         being diff'ed.

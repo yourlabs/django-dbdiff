@@ -2,8 +2,8 @@ import os
 
 from django import test
 
-from .decimal_test.models import TestModel as DecimalTestModel
 from ..fixture import Fixture
+from .decimal_test.models import TestModel as DecimalTestModel
 
 
 class DecimalDiffTest(test.TransactionTestCase):
