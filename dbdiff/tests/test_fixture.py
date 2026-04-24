@@ -23,3 +23,10 @@ class FixtureTest(test.TransactionTestCase):
 
     def test_models(self):
         assert self.fixture.models == [Group]
+
+    def test_diff_exact_match_returns_none(self):
+        # Regression: the always-False `not diff` (imported function) bug
+        # caused diff() to never return None, leaking temp files and breaking
+        # assertNoDiff() with a TypeError on exact matches.
+        Group.objects.create(id=1, name='initial_name')
+        assert self.fixture.diff() is None

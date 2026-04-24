@@ -126,7 +126,7 @@ class Fixture(object):
             ignore_pk=ignore_pk,
         )
 
-        if not unexpected and not missing and not diff:
+        if not unexpected and not missing and not different:
             os.unlink(dump_path)
             return None
 

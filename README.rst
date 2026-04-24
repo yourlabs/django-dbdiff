@@ -1,7 +1,7 @@
-.. image:: https://travis-ci.org/yourlabs/django-dbdiff.svg
-    :target: https://travis-ci.org/yourlabs/django-dbdiff
-.. image:: https://codecov.io/github/yourlabs/django-dbdiff/coverage.svg?branch=master
-    :target: https://codecov.io/github/yourlabs/django-dbdiff?branch=master
+.. image:: https://github.com/yourlabs/django-dbdiff/actions/workflows/django.yml/badge.svg
+    :target: https://github.com/yourlabs/django-dbdiff/actions/workflows/django.yml
+.. image:: https://codecov.io/gh/yourlabs/django-dbdiff/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/yourlabs/django-dbdiff
 .. image:: https://badge.fury.io/py/django-dbdiff.png
    :target: http://badge.fury.io/py/django-dbdiff
 
@@ -57,11 +57,11 @@ Example:
 
 .. code-block:: python
 
-    from django import TransactionTestCase
+    from django.test import TransactionTestCase
     from dbdiff.fixture import Fixture
 
 
-    class YourImportTest(test.TransactionTestCase):
+    class YourImportTest(TransactionTestCase):
         reset_sequences = True
 
         def test_your_import(self):
@@ -83,6 +83,16 @@ If you need to ignore fields globally, set the class-level variable exclude as s
 
    Fixture.exclude = {'mrsrequest.mrsrequest': ['token']}
 
+If your import produces records with non-deterministic primary keys (e.g.
+UUIDs or sequence gaps), pass ``ignore_pk=True`` to match records by their
+field content instead of by pk:
+
+.. code-block:: python
+
+    Fixture('yourapp/tests/yourtest.json',
+            models=[YourModel],
+            ignore_pk=True).assertNoDiff()
+
 Instead of deleting the fixtures manually before running the tests to
 regenerate them, just run your tests with FIXTURE_REWRITE=1 environment
 variable. This will overwrite the fixtures and make the tests look like it
@@ -93,10 +103,10 @@ See tests and docstrings for crunchy details.
 Requirements
 ============
 
-MySQL, SQLite and PostgreSQL, Python 3.8 to 3.12 are supported along with
-Django 3.2 to 5.0 - it's always better to support django's master so that we
-can **upgrade easily when it is released**, which is one of the selling points
-for having 100% coverage.
+MySQL, SQLite and PostgreSQL, Python 3.10 to 3.14 are supported along with
+Django 4.2, 5.2, and 6.0 - it's always better to support django's master so
+that we can **upgrade easily when it is released**, which is one of the selling
+points for having 100% coverage.
 
 Install
 =======
