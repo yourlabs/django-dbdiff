@@ -70,7 +70,7 @@ def diff(expected, result, ignore_pk=False):  # noqa: C901
                 continue
 
             different.setdefault(model, {})
-            different[model].setdefault(pk, {})
+            different.setdefault(model, {}).setdefault(pk, {})
 
             for expected_field, expected_value in expected_fields.items():
                 result_value = result_fields[expected_field]
@@ -94,7 +94,7 @@ def _diff_by_content(expected, result):  # noqa: C901
         result_list = list(result.get(model, {}).items())
         matched_result_indices = set()
 
-        for exp_pk, exp_fields in expected_list:
+        for exp_pk, exp_fields in list(expected_list):
             found = False
             for i, (res_pk, res_fields) in enumerate(result_list):
                 if i in matched_result_indices:
@@ -159,7 +159,16 @@ def patch_transaction_test_case():
 
     from django.test.testcases import TransactionTestCase
 
-    raw = inspect.getattr_static(TransactionTestCase, '_reset_sequences')
+    _raw = inspect.getattr_static(TransactionTestCase, '_reset_sequences')
+    _is_classmethod = isinstance(_raw, classmethod)
+
+    # When accessed on the class, a classmethod returns a bound method
+    # (needs only db_name); a plain function stays unbound
+    # (needs self + db_name).
+    if _is_classmethod:
+        _original_bound = TransactionTestCase._reset_sequences
+    else:
+        _original_bound = None
 
     def _sqlite_reset(db_name):
         connection = connections[db_name]
@@ -174,20 +183,18 @@ def patch_transaction_test_case():
         for statement in statements:
             cursor.execute(statement)
 
-    if isinstance(raw, classmethod):
-        # Django 5.x: _reset_sequences is a classmethod
-        _original = TransactionTestCase._reset_sequences
-
-        @classmethod
-        def new_reset_sequences(cls, db_name):  # noqa: N805
-            _original(db_name)
-            _sqlite_reset(db_name)
-    else:
-        # Django 4.x: _reset_sequences is a regular instance method
-        _original = raw
-
-        def new_reset_sequences(self, db_name):
-            _original(self, db_name)
-            _sqlite_reset(db_name)
+    # Django 5.x made _fixture_setup a @classmethod which calls
+    # cls._reset_sequences(db_name). A plain function on a class accessed
+    # via cls receives db_name as `self` and errors. We must always use
+    # @classmethod so the descriptor injects `cls` and db_name lands in the
+    # right parameter. Classmethods called on instances (Django 4.x style)
+    # also work fine.
+    @classmethod
+    def new_reset_sequences(cls, db_name):  # noqa: N805
+        if _is_classmethod:
+            _original_bound(db_name)
+        else:
+            _raw(cls, db_name)
+        _sqlite_reset(db_name)
 
     TransactionTestCase._reset_sequences = new_reset_sequences
