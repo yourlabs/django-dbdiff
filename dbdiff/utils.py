@@ -160,15 +160,12 @@ def patch_transaction_test_case():
     from django.test.testcases import TransactionTestCase
 
     _raw = inspect.getattr_static(TransactionTestCase, '_reset_sequences')
-    _is_classmethod = isinstance(_raw, classmethod)
-
-    # When accessed on the class, a classmethod returns a bound method
-    # (needs only db_name); a plain function stays unbound
-    # (needs self + db_name).
-    if _is_classmethod:
-        _original_bound = TransactionTestCase._reset_sequences
-    else:
-        _original_bound = None
+    # Capture the already-resolved callable before we replace it.
+    # For classmethod/staticmethod, the descriptor protocol strips the
+    # wrapper so TransactionTestCase._reset_sequences(db_name) works.
+    # For a plain function (Django 4.x), it needs an explicit first arg.
+    _needs_explicit_cls = not isinstance(_raw, (classmethod, staticmethod))
+    _original = TransactionTestCase._reset_sequences
 
     def _sqlite_reset(db_name):
         connection = connections[db_name]
@@ -183,18 +180,16 @@ def patch_transaction_test_case():
         for statement in statements:
             cursor.execute(statement)
 
-    # Django 5.x made _fixture_setup a @classmethod which calls
-    # cls._reset_sequences(db_name). A plain function on a class accessed
-    # via cls receives db_name as `self` and errors. We must always use
-    # @classmethod so the descriptor injects `cls` and db_name lands in the
-    # right parameter. Classmethods called on instances (Django 4.x style)
-    # also work fine.
+    # Always install as @classmethod so Django 5.x (which calls
+    # cls._reset_sequences(db_name)) passes db_name in the right position.
+    # Django 4.x calls self._reset_sequences(db_name) on instances, which
+    # also works because classmethods accept both call styles.
     @classmethod
     def new_reset_sequences(cls, db_name):  # noqa: N805
-        if _is_classmethod:
-            _original_bound(db_name)
+        if _needs_explicit_cls:
+            _original(cls, db_name)
         else:
-            _raw(cls, db_name)
+            _original(db_name)
         _sqlite_reset(db_name)
 
     TransactionTestCase._reset_sequences = new_reset_sequences

@@ -48,7 +48,7 @@ def sequence_reset(model):
                 column=pk_field, table=table
             )
         )
-        result = cursor.fetchone()[0] or 0
+        result = cursor.fetchone()[0] or 1
         reset = 'ALTER TABLE {table} AUTO_INCREMENT = %s' % result
 
     connection.cursor().execute(
