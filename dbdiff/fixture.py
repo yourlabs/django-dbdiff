@@ -108,23 +108,25 @@ class Fixture(object):
         exclude_final = copy.copy(self.exclude)
         exclude_final.update(exclude or {})
 
-        with os.fdopen(fh, 'w') as f:
-            self.dump(f)
+        try:
+            with os.fdopen(fh, 'w') as f:
+                self.dump(f)
 
-        with open(self.path, 'r') as e, open(dump_path, 'r') as r:
-            expected, result = json.load(e), json.load(r)
+            with open(self.path, 'r') as e, open(dump_path, 'r') as r:
+                expected, result = json.load(e), json.load(r)
 
-        if ignore_pk is None:
-            ignore_pk = self.ignore_pk
+            if ignore_pk is None:
+                ignore_pk = self.ignore_pk
 
-        unexpected, missing, different = diff(
-            get_tree(expected, exclude_final),
-            get_tree(result, exclude_final),
-            ignore_pk=ignore_pk,
-        )
+            unexpected, missing, different = diff(
+                get_tree(expected, exclude_final),
+                get_tree(result, exclude_final),
+                ignore_pk=ignore_pk,
+            )
+        finally:
+            os.unlink(dump_path)
 
         if not unexpected and not missing and not different:
-            os.unlink(dump_path)
             return None
 
         return unexpected, missing, different

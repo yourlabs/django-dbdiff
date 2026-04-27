@@ -44,6 +44,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
+exclude = ["dbdiff.tests*", "tests*", "tests.*"]
 
 [tool.ruff]
 line-length = 79

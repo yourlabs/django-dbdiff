@@ -14,3 +14,9 @@ API Reference
 
 .. automodule:: dbdiff.test
    :members:
+
+.. automodule:: dbdiff.serializers.json
+   :members:
+
+.. automodule:: dbdiff.apps
+   :members:

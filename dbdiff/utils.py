@@ -69,7 +69,6 @@ def diff(expected, result, ignore_pk=False):  # noqa: C901
             if expected_fields == result_fields:
                 continue
 
-            different.setdefault(model, {})
             different.setdefault(model, {}).setdefault(pk, {})
 
             for expected_field, expected_value in expected_fields.items():
@@ -94,7 +93,7 @@ def _diff_by_content(expected, result):  # noqa: C901
         result_list = list(result.get(model, {}).items())
         matched_result_indices = set()
 
-        for exp_pk, exp_fields in list(expected_list):
+        for exp_pk, exp_fields in expected_list:
             found = False
             for i, (res_pk, res_fields) in enumerate(result_list):
                 if i in matched_result_indices:
@@ -154,7 +153,14 @@ def get_models_tables(models):
 
 
 def patch_transaction_test_case():
-    """Monkeypatch TransactionTestCase._reset_sequences to support SQLite."""
+    """Monkeypatch TransactionTestCase._reset_sequences to support SQLite.
+
+    Safe to call once, from AppConfig.ready(). Calling it a second time would
+    wrap the already-patched classmethod again; the inner _needs_explicit_cls
+    check would then see a classmethod and call _original(db_name), passing
+    db_name correctly, so double-patching doesn't break anything — but callers
+    should avoid it anyway.
+    """
     import inspect
 
     from django.test.testcases import TransactionTestCase

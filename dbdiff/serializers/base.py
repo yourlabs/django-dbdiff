@@ -49,7 +49,7 @@ class BaseSerializerMixin(object):
 
     @classmethod
     def normalize_decimals(cls, data):
-        """Strip trailing zeros for constitency.
+        """Strip trailing zeros for consistency.
 
         In addition, dbdiff serialization forces Decimal normalization, because
         trailing zeros could happen in inconsistent ways.

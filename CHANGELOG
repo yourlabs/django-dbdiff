@@ -1,4 +1,7 @@
-0.9.7 Fix always-False diff condition (temp file leak + assertNoDiff TypeError on exact match); add Python 3.10-3.14 and Django 4.2/5.2/6.0 support; drop Python 3.8/3.9 and Django EOL versions; migrate to pyproject.toml; modernize CI (checkout@v4, setup-python@v5, codecov-action); add automated PyPI release workflow
+0.9.7 Fix always-False diff condition (temp file leak + assertNoDiff TypeError on exact match)
+      Use ignore_pk in ContentTypeTestCase for Django 6.0 content-type ordering stability
+      Add Python 3.10-3.14 and Django 4.2/5.2/6.0; drop EOL Python 3.8/3.9 and Django 4.0/4.1
+      Migrate to pyproject.toml; modernize CI (checkout@v4, setup-python@v5, codecov-action@v6)
 
 0.9.6 Add support for Python 3.12
 
