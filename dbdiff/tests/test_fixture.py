@@ -28,6 +28,6 @@ class FixtureTest(test.TransactionTestCase):
         # Regression: the always-False `not diff` (imported function) bug
         # caused diff() to never return None, leaking temp files and breaking
         # assertNoDiff() with a TypeError on exact matches.
-        # Fixture contains: [{"model": "auth.group", "pk": 1, "fields": {"name": "initial_name"}}]
+        # Fixture: [{"model": "auth.group", "pk": 1, "fields": {"name": "initial_name"}}]
         Group.objects.create(id=1, name='initial_name')
         assert self.fixture.diff() is None
